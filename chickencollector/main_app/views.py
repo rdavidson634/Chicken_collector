@@ -1,15 +1,16 @@
 from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView
 from .models import Chicken, Toy
 from .forms import FeedingForm
 
 class ChickenCreate(CreateView):
     model = Chicken
-    fields = '__all__'
+    fields = ['name', 'breed', 'description', 'age']
 
 class ChickenUpdate(UpdateView):
     model = Chicken
-    fields = ['name', 'breed', 'description', 'age']
+    fields = ['breed', 'description', 'age']
 
 class ChickenDelete(DeleteView):
     model = Chicken
@@ -45,3 +46,25 @@ def add_feeding(request, chicken_id):
 def assoc_toy(request, chicken_id, toy_id):
     Chicken.objects.get(id=chicken_id).toys.add(toy_id)
     return redirect('detail', chicken_id=chicken_id)
+
+def unassoc_toy(request, chicken_id, toy_id):
+    Chicken.objects.get(id=chicken_id).toys.remove(toy_id)
+    return redirect('detail', chicken_id=chicken_id)
+
+class ToyList(ListView):
+  model = Toy
+
+class ToyDetail(DetailView):
+  model = Toy
+
+class ToyCreate(CreateView):
+  model = Toy
+  fields = '__all__'
+
+class ToyUpdate(UpdateView):
+  model = Toy
+  fields = ['name', 'color']
+
+class ToyDelete(DeleteView):
+  model = Toy
+  success_url = '/toys/'
